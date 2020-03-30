@@ -12,6 +12,7 @@ public:
 
 	RandomNumberGenerator(unsigned long seed);
 	double GetRandom();
+	double GetRandom(double lo, double hi);
 
 
 };

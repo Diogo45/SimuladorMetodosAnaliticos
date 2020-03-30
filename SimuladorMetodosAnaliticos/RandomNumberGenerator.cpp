@@ -16,3 +16,9 @@ double RandomNumberGenerator::GetRandom()
 	seed = (multiplierA * seed + incrementC) % maxValueM;
 	return (double) seed / maxValueM;
 }
+
+double RandomNumberGenerator::GetRandom(double lo, double hi)
+{
+	seed = (multiplierA * seed + incrementC) % maxValueM;
+	return ((double)seed / maxValueM) * (hi - lo) + lo;
+}

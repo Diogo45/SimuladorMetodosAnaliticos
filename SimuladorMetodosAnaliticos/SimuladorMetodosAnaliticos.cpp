@@ -4,10 +4,23 @@
 #include "pch.h"
 #include <iostream>
 
+
+
+
+
+
 int main()
 {
 	RandomNumberGenerator* rnd = new RandomNumberGenerator(1);
 
+	Simulation::getInstance().StartQueue(Event(3.0, 0, EventType::ARRIVAL));
+	for (size_t i = 0; i < 100000; i++)
+	{
+		Simulation::getInstance().Step();
+
+	}
+
+	Simulation::getInstance().CalculateStatistics();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
