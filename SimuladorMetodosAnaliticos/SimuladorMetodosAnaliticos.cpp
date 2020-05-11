@@ -9,12 +9,31 @@
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
-	RandomNumberGenerator* rnd = new RandomNumberGenerator(1);
+	if (argc < 2)
+	{
+		std::cout << "Please specify topology file!" << std::endl;
+		return -1;
+	}
 
-	Simulation::getInstance().StartQueue(Event(3.0, 0, EventType::ARRIVAL));
-	for (size_t i = 0; i < 100000; i++)
+	//std::cout << "Started Parsing Topology" << std::endl;
+	Simulation::getInstance().ParseTopology(argv[1]);
+	//std::cout << "Finished Parsing Topology" << std::endl;
+	/*Simulation::getInstance().StartSimulation();
+
+	Queue* queue = new Queue(0, 3, float2(2, 3), float2(2, 5), 2);
+	Queue* queue2 = new Queue(1, 3, float2(1, 2), float2(3, 5), 1);
+
+	Simulation::getInstance().AddQueue(queue);
+	Simulation::getInstance().AddQueue(queue2);
+
+	Simulation::getInstance().AddConnection(0, Connection(1, 1.0));
+
+	Simulation::getInstance().ScheduleEvent(Event(2.5, queue->queue_id, EventType::ARRIVAL));*/
+
+
+	for (size_t i = 0; i < 100; i++)
 	{
 		Simulation::getInstance().Step();
 

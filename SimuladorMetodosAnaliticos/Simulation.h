@@ -1,7 +1,9 @@
 #pragma once
 #include <queue>
+#include <vector>
+#include <string>
 
-enum EventType { ARRIVAL, DEPARTURE };
+enum EventType { ARRIVAL, DEPARTURE, TRANSFER };
 
 struct Event {
 	float time;
@@ -18,6 +20,8 @@ struct Event {
 
 };
 
+
+void Split(const std::string& str, const std::string& delim, std::vector<std::string>& parts);
 
 
 class Simulation {
@@ -42,6 +46,7 @@ public:
 
 	void operator=(Simulation const&) = delete;
 
+
 	std::priority_queue<Event, std::vector<Event>, CompareEvent> events;
 
 
@@ -53,12 +58,20 @@ public:
 		return instance;
 	}
 
-	Queue* queue;
+	std::vector<Queue*> queueList;
 	double global_time;
+
+
 
 	Simulation() { };
 
-	void StartQueue(Event inicialEvent);
+	void ParseTopology(std::string file);
+
+	void StartSimulation();
+
+	void AddQueue(Queue* queue);
+
+	void AddConnection(int queue_id, Connection connection);
 
 	void ScheduleEvent(Event e);
 

@@ -1,19 +1,42 @@
 #include "pch.h"
 #include <iostream>
 #include <string>
+#include <chrono>
 
-Queue::Queue(char arrival_dist, char serve_dist, int queue_size, float2 arrival_interval, float2 serve_interval, int server_quantity) : arrival_interval(0, 0), serve_interval(0, 0), rnd(5)
+Queue::Queue(int queue_id, int queue_size, float2 arrival_interval, float2 serve_interval, int server_quantity) : arrival_interval(0, 0), serve_interval(0, 0), rnd(1)
 {
+	this->queue_id = queue_id;
 	this->current_queue_size = 0;
-	this->arrival_dist = arrival_dist;
-	this->serve_dist = serve_dist;
-	this->queue_max_size = queue_size;
+
+
+	if (queue_size == -1) 
+	{
+		this->queue_max_size = std::numeric_limits<int>::max();
+		queue_states = std::vector<float>(1);
+
+	}
+	else 
+	{
+		this->queue_max_size = queue_size;
+		queue_states = std::vector<float>(queue_size + 1);
+
+	}
 	this->arrival_interval = arrival_interval;
 	this->serve_interval = serve_interval;
 	this->server_quantity = server_quantity;
+	//this->rnd.seed = 1;
 
-	queue_size++;
-	queue_states = std::vector<float>(queue_size);
+
+
+	//std::cout << queue_states.max_size();
+	//if (queue_max_size >= queue_states.max_size()) 
+	//{
+	//}
+	//else {
+
+	//	queue_states = std::vector<float>(queue_max_size);
+
+	//}
 
 
 }
@@ -21,24 +44,69 @@ Queue::Queue(char arrival_dist, char serve_dist, int queue_size, float2 arrival_
 void Queue::Arrival(double time)
 {
 
-	queue_states[current_queue_size] += time - Simulation::getInstance().global_time;
-	Simulation::getInstance().global_time += time - Simulation::getInstance().global_time;
 
-	if (current_queue_size < queue_max_size) {
+	if (current_queue_size < queue_max_size)
+	{
 		current_queue_size++;
 
-		if (current_queue_size <= server_quantity) {
-			Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), 0, EventType::DEPARTURE));
+		if (infinity && current_queue_size >= queue_states.size()) { queue_states.push_back(0); }
+
+
+		if (current_queue_size <= server_quantity)
+		{
+
+			if (queue_connections.size() > 0)
+			{
+
+
+				Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), queue_id, EventType::TRANSFER));
+
+			}
+			else
+			{
+				Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), queue_id, EventType::DEPARTURE));
+			}
+
+
+
 		}
 	}
 
-	Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(arrival_interval.x, arrival_interval.y), 0, EventType::ARRIVAL));
+	Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(arrival_interval.x, arrival_interval.y), queue_id, EventType::ARRIVAL));
 
 #ifdef DEBUG
+
 	PrintStates();
 
 #endif // DEBUG
 
+
+}
+
+
+void Queue::Transfer(double time, Queue* next)
+{
+
+
+	current_queue_size--;
+	if (current_queue_size >= server_quantity) {
+
+
+		Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), queue_id, EventType::TRANSFER));
+	}
+
+	if (next->current_queue_size < next->queue_max_size)
+	{
+		next->current_queue_size++;
+
+		if (next->infinity && next->current_queue_size >= next->queue_states.size()) { next->queue_states.push_back(0); }
+
+
+		if (next->current_queue_size <= next->server_quantity)
+		{
+			Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(next->serve_interval.x, next->serve_interval.y), next->queue_id, EventType::DEPARTURE));
+		}
+	}
 
 }
 
@@ -57,15 +125,24 @@ void Queue::PrintStates()
 
 void Queue::Serve(double time)
 {
-	queue_states[current_queue_size] += time - Simulation::getInstance().global_time;
-	Simulation::getInstance().global_time += time - Simulation::getInstance().global_time;
+
 	current_queue_size--;
 	if (current_queue_size >= server_quantity) {
-		Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), 0, EventType::DEPARTURE));
-	}
+		if (queue_connections.size() > 0)
+		{
 
+
+			Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), queue_id, EventType::TRANSFER));
+
+		}
+		else
+		{
+			Simulation::getInstance().ScheduleEvent(Event(Simulation::getInstance().global_time + rnd.GetRandom(serve_interval.x, serve_interval.y), queue_id, EventType::DEPARTURE));
+		}
+	}
 #ifdef DEBUG
 	PrintStates();
 
 #endif // DEBUG
 }
+

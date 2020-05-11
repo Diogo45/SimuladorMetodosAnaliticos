@@ -1,0 +1,13 @@
+//Queues:
+//ID;Server Quantity;Queue Capacity;Min Arrival;Max Arrival;Min Serve;Max Serve
+//Connections:
+//Queue_ID1;Queue_ID2;Chance
+//InitialArrival:
+//Queue_ID;TIME
+Queues:
+0;2;3;2;3;1;3
+1;1;-1;2;3;4;7
+Connections:
+0;1;0.7
+InitialArrival:
+0;3
