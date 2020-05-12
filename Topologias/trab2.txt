@@ -1,11 +1,13 @@
 //Constants:
-//Seed;Iterations;
+//Seed;Iterations
 //Queues:
 //ID;Server Quantity;Queue Capacity;Min Arrival;Max Arrival;Min Serve;Max Serve
 //Connections:
 //Queue_ID1;Queue_ID2;Chance
 //InitialArrival:
 //Queue_ID;TIME
+Constants:
+1;500000
 Queues:
 0;1;-1;1;4;1;1.5
 1;3;5;1;4;5;10

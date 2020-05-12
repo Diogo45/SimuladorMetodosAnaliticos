@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
 
 
-	for (size_t i = 0; i < 500000; i++)
+	for (size_t i = 0; i < Simulation::getInstance().iter; i++)
 	{
 		Simulation::getInstance().Step();
 

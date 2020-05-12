@@ -14,7 +14,7 @@ void Simulation::ParseTopology(std::string file)
 	topology.open(file);
 
 	StartSimulation();
-	std::cout << "Start" << std::endl;
+	//std::cout << "Start" << std::endl;
 
 
 	while (std::getline(topology, line).good())
@@ -51,6 +51,14 @@ void Simulation::ParseTopology(std::string file)
 			continue;
 		}
 
+		if (line.find("Constants:") != std::string::npos)
+		{
+			//std::cout << "State Arrivals" << std::endl;
+
+			state = 3;
+			continue;
+		}
+
 		if (state == 0)
 		{
 			std::vector<std::string> split;
@@ -62,7 +70,7 @@ void Simulation::ParseTopology(std::string file)
 			int id = std::atoi(split.at(0).c_str());
 			int server_qtd = std::atoi(split.at(1).c_str());
 
-			std::cout << "Added Queue" << server_qtd << std::endl;
+			//std::cout << "Added Queue" << server_qtd << std::endl;
 
 
 			int capacity = std::atoi(split.at(2).c_str());
@@ -123,6 +131,20 @@ void Simulation::ParseTopology(std::string file)
 			//delete(&split);
 		}
 
+		if(state == 3)
+		{
+			std::vector<std::string> split;
+			Split(line, ";", split);
+			//std::cout << "Split Event" << std::endl;
+
+			int iter = std::atoi(split.at(1).c_str());
+			float seed = std::atof(split.at(0).c_str());
+
+			Simulation::getInstance().iter = iter;
+			Simulation::getInstance().seed = seed;
+
+		}
+
 	}
 
 	for (size_t i = 0; i < Simulation::getInstance().queueList.size(); i++)
@@ -131,7 +153,7 @@ void Simulation::ParseTopology(std::string file)
 
 	}
 
-	Simulation::getInstance().rnd = new RandomNumberGenerator(2);
+	Simulation::getInstance().rnd = new RandomNumberGenerator(Simulation::getInstance().seed);
 	 
 	topology.close();
 }
@@ -156,7 +178,7 @@ void Simulation::AddConnection(int queue_id, Connection connection)
 
 void Simulation::CalculateStatistics()
 {
-	//std::cout << "ESTADO DA FILA		TEMPO		PROBABILIDADE" << std::endl;
+	std::cout << "SEED: " << Simulation::getInstance().seed << " ITERACOES: " << Simulation::getInstance().iter << std::endl;
 
 	for (size_t j = 0; j < queueList.size(); j++)
 	{

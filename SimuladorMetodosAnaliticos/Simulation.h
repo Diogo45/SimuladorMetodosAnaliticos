@@ -61,6 +61,9 @@ public:
 	std::vector<Queue*> queueList;
 	double global_time;
 
+	double seed;
+
+	int iter;
 
 	RandomNumberGenerator* rnd;
 
