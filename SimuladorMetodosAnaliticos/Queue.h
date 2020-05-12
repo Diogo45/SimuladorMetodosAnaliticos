@@ -78,8 +78,7 @@ public:
 
 	bool infinity = false;
 
-
-	RandomNumberGenerator rnd;
+	int losses;
 
 	void Transfer(double time, Queue* next);
 

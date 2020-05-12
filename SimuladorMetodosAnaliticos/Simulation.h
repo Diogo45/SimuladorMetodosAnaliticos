@@ -62,6 +62,7 @@ public:
 	double global_time;
 
 
+	RandomNumberGenerator* rnd;
 
 	Simulation() { };
 

@@ -131,7 +131,8 @@ void Simulation::ParseTopology(std::string file)
 
 	}
 
-
+	Simulation::getInstance().rnd = new RandomNumberGenerator(2);
+	 
 	topology.close();
 }
 
@@ -170,9 +171,10 @@ void Simulation::CalculateStatistics()
 
 		}
 
-		std::cout << std::endl;
+		std::cout << "PERDAS: " << queue->losses <<  std::endl << std::endl;
 	}
 
+	std::cout << "Tempo Total de Simulacao: "  << Simulation::getInstance().global_time << std::endl;
 
 }
 
@@ -201,7 +203,6 @@ void Simulation::Step() {
 
 	Event event = events.top();
 	events.pop();
-
 
 
 	for (size_t i = 0; i < queueList.size(); i++)
@@ -233,7 +234,7 @@ void Simulation::Step() {
 	else
 	{
 		//DECIDE NEXT QUEUE
-		double decide = queue->rnd.GetRandom();
+		double decide = Simulation::getInstance().rnd->GetRandom();
 		double totalChance = 0.0;
 
 
@@ -246,17 +247,19 @@ void Simulation::Step() {
 			if (decide < totalChance)
 			{
 
-			
+
+
 
 				queue->Transfer(event.time, queueList.at(connection.queue_id));
 				return;
 			}
+			
 
 		}
 
 
-
 		queue->Serve(event.time);
+
 
 	}
 

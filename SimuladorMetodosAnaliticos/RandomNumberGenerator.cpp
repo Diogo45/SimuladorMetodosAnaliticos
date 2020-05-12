@@ -6,9 +6,9 @@
 RandomNumberGenerator::RandomNumberGenerator(unsigned long seed)
 {
 	this->seed = seed;
-	maxValueM = (long) pow(2, 32);
-	multiplierA = 1664525;
-	incrementC = 1013904223;
+	this->maxValueM = (long) pow(2, 32);
+	this->multiplierA = 1664525;
+	this->incrementC = 1013904223;
 }
 
 double RandomNumberGenerator::GetRandom()
